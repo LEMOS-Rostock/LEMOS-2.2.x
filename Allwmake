@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -x
+
+wmake libso libLEMOS-2.2.x
+
+

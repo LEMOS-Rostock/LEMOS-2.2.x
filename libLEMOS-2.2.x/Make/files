@@ -1,0 +1,13 @@
+boundaryConditions/inflowGenerator/decayingVorton.C
+boundaryConditions/inflowGenerator/decayingTurbulenceFvPatchVectorField.C
+boundaryConditions/inflowGenerator/decayingTurbulenceFvPatchVectorFieldFwd.C
+
+turbulenceModels/incompressible/HYBRID/hybKOmegaSST/hybKOmegaSST.C
+turbulenceModels/incompressible/HYBRID/hybDynV2F/hybDynV2F.C
+turbulenceModels/incompressible/LES/dynamicMixedModel/dynamicMixedModel.C
+turbulenceModels/incompressible/LES/LDMMS/LDMMS.C
+
+postProcessing/functionObjects/utilities/uTau/uTau.C
+postProcessing/functionObjects/utilities/uTau/uTauFunctionObject.C
+
+LIB = $(FOAM_LIBBIN)/libLEMOS-2.1.x
