@@ -10,4 +10,4 @@ turbulenceModels/incompressible/LES/LDMMS/LDMMS.C
 postProcessing/functionObjects/utilities/uTau/uTau.C
 postProcessing/functionObjects/utilities/uTau/uTauFunctionObject.C
 
-LIB = $(FOAM_LIBBIN)/libLEMOS-2.1.x
+LIB = $(FOAM_LIBBIN)/libLEMOS-2.2.x
