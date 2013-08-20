@@ -25,6 +25,8 @@ License
 
 #include "decayingTurbulenceFvPatchVectorField.H"
 #include "volFields.H"
+#include "addToRunTimeSelectionTable.H"
+#include "fvPatchFieldMapper.H"
 #include "ListListOps.H"
 #include "PstreamReduceOps.H"
 
@@ -41,12 +43,8 @@ inline Foam::scalar lspot(Foam::scalar l)
     return 3*l;
 }
 
-namespace Foam
-{
 
-//defineTypeNameAndDebug(decayingTurbulenceFvPatchVectorField, 0);
-
-decayingTurbulenceFvPatchVectorField::decayingTurbulenceFvPatchVectorField
+Foam::decayingTurbulenceFvPatchVectorField::decayingTurbulenceFvPatchVectorField
 (
     const fvPatch& p, 
     const DimensionedField<vector, volMesh>& iF
@@ -65,7 +63,7 @@ decayingTurbulenceFvPatchVectorField::decayingTurbulenceFvPatchVectorField
 {
 }
 
-decayingTurbulenceFvPatchVectorField::decayingTurbulenceFvPatchVectorField
+Foam::decayingTurbulenceFvPatchVectorField::decayingTurbulenceFvPatchVectorField
 (
     const decayingTurbulenceFvPatchVectorField& ptf,
     const fvPatch& p,
@@ -86,7 +84,7 @@ decayingTurbulenceFvPatchVectorField::decayingTurbulenceFvPatchVectorField
 {
 }
 
-decayingTurbulenceFvPatchVectorField::decayingTurbulenceFvPatchVectorField
+Foam::decayingTurbulenceFvPatchVectorField::decayingTurbulenceFvPatchVectorField
 (
     const fvPatch& p, 
     const DimensionedField<vector, volMesh>& iF, 
@@ -144,7 +142,7 @@ decayingTurbulenceFvPatchVectorField::decayingTurbulenceFvPatchVectorField
         Pout<<"Warning: there are "<<numsf<<" inlet cells (out of "<<patch().size()<<") where the integral length is smaller than the cell size."<<endl;
 }
 
-decayingTurbulenceFvPatchVectorField::decayingTurbulenceFvPatchVectorField
+Foam::decayingTurbulenceFvPatchVectorField::decayingTurbulenceFvPatchVectorField
 (
     const decayingTurbulenceFvPatchVectorField& ptf
 )
@@ -162,7 +160,7 @@ decayingTurbulenceFvPatchVectorField::decayingTurbulenceFvPatchVectorField
 {
 }
 
-decayingTurbulenceFvPatchVectorField::decayingTurbulenceFvPatchVectorField
+Foam::decayingTurbulenceFvPatchVectorField::decayingTurbulenceFvPatchVectorField
 (
     const decayingTurbulenceFvPatchVectorField& ptf, 
     const DimensionedField<vector, volMesh>& iF
@@ -180,7 +178,7 @@ decayingTurbulenceFvPatchVectorField::decayingTurbulenceFvPatchVectorField
     direction_   (ptf.direction_)
 {}
 
-void decayingTurbulenceFvPatchVectorField::autoMap(const fvPatchFieldMapper& m)
+void Foam::decayingTurbulenceFvPatchVectorField::autoMap(const fvPatchFieldMapper& m)
 {
     Field<vector>::autoMap(m);
     LField_.autoMap(m);
@@ -189,7 +187,7 @@ void decayingTurbulenceFvPatchVectorField::autoMap(const fvPatchFieldMapper& m)
     R_.autoMap(m);
 }
 
-void decayingTurbulenceFvPatchVectorField::rmap(const fvPatchField<vector>& ptf, const labelList& addr)
+void Foam::decayingTurbulenceFvPatchVectorField::rmap(const fvPatchField<vector>& ptf, const labelList& addr)
 {
     fixedValueFvPatchField<vector>::rmap(ptf, addr);
 
@@ -202,7 +200,7 @@ void decayingTurbulenceFvPatchVectorField::rmap(const fvPatchField<vector>& ptf,
 }
 
 
-void decayingTurbulenceFvPatchVectorField::updateCoeffs()
+void Foam::decayingTurbulenceFvPatchVectorField::updateCoeffs()
 {
     if (this->updated())
         return;
@@ -216,7 +214,7 @@ void decayingTurbulenceFvPatchVectorField::updateCoeffs()
     fixedValueFvPatchField<vector>::updateCoeffs();
 }
 
-void decayingTurbulenceFvPatchVectorField::doUpdate()
+void Foam::decayingTurbulenceFvPatchVectorField::doUpdate()
 {
     Field<vector>& patchField = *this;
     
@@ -387,7 +385,7 @@ void decayingTurbulenceFvPatchVectorField::doUpdate()
     }
 }
 
-void decayingTurbulenceFvPatchVectorField::write(Ostream& os) const
+void Foam::decayingTurbulenceFvPatchVectorField::write(Ostream& os) const
 {
     fvPatchField<vector>::write(os);
     LField_.writeEntry("LField", os);
@@ -402,4 +400,13 @@ void decayingTurbulenceFvPatchVectorField::write(Ostream& os) const
         os.writeKeyword("vortons")<<vortons_<<token::END_STATEMENT<<nl;
 }
 
-} // End namespace Foam
+
+namespace Foam
+{
+    makePatchTypeField
+    (
+        fvPatchVectorField,
+        decayingTurbulenceFvPatchVectorField
+    );
+}
+

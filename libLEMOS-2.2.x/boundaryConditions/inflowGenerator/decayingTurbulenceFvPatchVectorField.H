@@ -43,7 +43,6 @@ Description
 
 SourceFiles
     decayingTurbulenceFvPatchVectorField.C
-    decayingTurbulenceFvPatchVectorFieldFwd.C
 
 \*---------------------------------------------------------------------------*/
 
@@ -133,7 +132,6 @@ private:
     void doUpdate();
 
 };
-
 } 
 
 #endif

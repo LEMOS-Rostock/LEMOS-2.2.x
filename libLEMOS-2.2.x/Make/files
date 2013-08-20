@@ -1,6 +1,5 @@
 boundaryConditions/inflowGenerator/decayingVorton.C
 boundaryConditions/inflowGenerator/decayingTurbulenceFvPatchVectorField.C
-boundaryConditions/inflowGenerator/decayingTurbulenceFvPatchVectorFieldFwd.C
 
 turbulenceModels/incompressible/HYBRID/hybKOmegaSST/hybKOmegaSST.C
 turbulenceModels/incompressible/HYBRID/hybDynV2F/hybDynV2F.C
