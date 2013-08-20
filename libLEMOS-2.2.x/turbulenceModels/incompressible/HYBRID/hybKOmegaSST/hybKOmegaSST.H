@@ -55,7 +55,7 @@ SourceFiles
 #ifndef hybKOmegaSST_H
 #define hybKOmegaSST_H
 
-#include "RASModel.H"
+#include "incompressible/RAS/RASModel/RASModel.H"
 #include "wallDist.H"
 #include "../../../LES/LESdeltas/LESdelta/LESdelta.H"
 #include "../../../LES/LESfilters/LESfilter/LESfilter.H"
