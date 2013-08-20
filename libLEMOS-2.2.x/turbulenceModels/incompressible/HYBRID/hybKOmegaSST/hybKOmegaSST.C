@@ -64,7 +64,6 @@ dimensionedScalar hybKOmegaSST::cD(const volSymmTensorField& D) const
     }
 }
 
-
 tmp<volScalarField> hybKOmegaSST::F1(const volScalarField& CDkOmega) const
 {
     volScalarField CDkOmegaPlus = max
@@ -218,7 +217,8 @@ hybKOmegaSST::hybKOmegaSST
             10.0
         )
     ),
-    Cint
+    
+    Cint_
     (
         dimensioned<scalar>::lookupOrAddToDict
         (
@@ -228,13 +228,57 @@ hybKOmegaSST::hybKOmegaSST
         )
     ),
 
+    CN_
+    (
+        dimensioned<scalar>::lookupOrAddToDict
+        (
+            "CN",
+            coeffDict_,
+            1.0
+        )
+    ),
+       
+    d_
+    (
+        IOobject
+        (
+            "d",
+            runTime_.timeName(),
+            mesh_,
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
+        ),
+        mesh_,
+        dimensionedScalar("d", dimless, 0.0)
+    ),   
+ 
+    x1_
+    (
+        dimensioned<scalar>::lookupOrAddToDict
+        (
+            "x1",
+            coeffDict_,
+            0.95
+        )
+    ),  
+     
+    x2_
+    (
+        dimensioned<scalar>::lookupOrAddToDict
+        (
+            "x2",
+            coeffDict_,
+            1.05
+        )
+    ), 
+ 
     omegaSmall_
     (
         "omegaSmall", 
          dimensionSet(0, 0, -1, 0, 0), 
          SMALL
     ),
-
+    
     y_(mesh_),
 
     k_
@@ -274,8 +318,6 @@ hybKOmegaSST::hybKOmegaSST
         autoCreateNut("nut", mesh_)
     ),
 
-    dMax(y_),
-
     rans
     (
         IOobject
@@ -287,15 +329,15 @@ hybKOmegaSST::hybKOmegaSST
             IOobject::AUTO_WRITE
         ),
         mesh_,
-        dimensionedScalar("rans", dimless, 0.0)
+        dimensionedScalar("rans", dimless, 0.0),
+        zeroGradientFvPatchScalarField::typeName
     ),
 
 
     filterPtr_(LESfilter::New(U.mesh(), coeffDict())),
     filter_(filterPtr_()),
     delta_(LESdelta::New("delta", U.mesh(), *this))
-
-
+    
 {
     bound(omega_, omegaMin_);
 
@@ -303,21 +345,30 @@ hybKOmegaSST::hybKOmegaSST
     nut_.correctBoundaryConditions();
 
     printCoeffs();
+    
     const pointField& ps = mesh_.points();
     const edgeList& es = mesh_.edges();
     const labelListList& eCells = mesh_.cellEdges();
 
-    scalar xxx =0.0;
+    scalar edgeLength = 0.0 ;
+    volScalarField maxEdgeLength = y_;
     
-    forAll(dMax, I)
+    forAll( maxEdgeLength , I )
     {
-      xxx = 0.0;
-      forAll(eCells[I], J)
-      {
-	if ((es[eCells[I][J]].mag(ps)) > xxx) xxx = es[eCells[I][J]].mag(ps);
-      }
-      dMax[I] = xxx;
+        edgeLength = 0.0;
+        forAll( eCells[I], J )
+        {
+	        if ( ( es[eCells[I][J]].mag( ps ) ) > edgeLength ) 
+	            edgeLength = es[ eCells[I][J] ].mag( ps );
+        }
+        maxEdgeLength[I] = edgeLength;
     }
+      
+    forAll( d_ , I )
+    {
+        d_[I] = sqrt( 0.5*( maxEdgeLength[I]*maxEdgeLength[I] + delta()[I]*delta()[I] ) ); 
+    }
+    
 }
 
 
@@ -403,8 +454,11 @@ bool hybKOmegaSST::read()
         betaStar_.readIfPresent(coeffDict());
         a1_.readIfPresent(coeffDict());
         c1_.readIfPresent(coeffDict());
-        Cint.readIfPresent(coeffDict());
-
+        Cint_.readIfPresent(coeffDict());
+        CN_.readIfPresent(coeffDict());
+        x1_.readIfPresent(coeffDict());
+        x2_.readIfPresent(coeffDict());
+        
         return true;
     }
     else
@@ -484,36 +538,39 @@ void hybKOmegaSST::correct()
     nut_ = a1_*k_/max(a1_*omega_, F2()*sqrt(S2));
     nut_.correctBoundaryConditions();
 
-    volScalarField lPrandtl = 1.0/0.55*pow(k_,1.0/2.0)/(omega_ + omegaSmall_); // integral length scale
+    volScalarField lPrandtl = CN_ *((100.0/9.0)*(pow(k_,0.5)/(omega_ + omegaSmall_))); // integral length scale using Prandtl formula
     volSymmTensorField D = dev(symm(fvc::grad(U_)));
     volScalarField nuSGS = mag(cD(D))*sqr(delta())*sqrt(2*magSqr(D)); // SGS stress using DSM
  
-    scalar kkk = 0;
-    scalar xk = 0;
-    scalar x1 = 0.95;
-    scalar x2 = 1.05;
+    scalar LtoDRatio = 0;
     
-    forAll(dMax, I)
-      {
-	rans[I] = 1; 
-	kkk = lPrandtl[I] / dMax[I] / Cint.value(); // integral length scale
+    scalar x1 = x1_.value(); 
+    scalar x2 = x2_.value();
+    scalar xk = 0; // value between x1 and x2 - coordinate for a smoothing function
+    
+ 
+    forAll( d_, I )
+    {
+	    rans[I] = 1; 
+	    
+	    LtoDRatio = lPrandtl[I] / d_[I] ;
+	    LtoDRatio /= Cint_.value();    // how many cells to resolve a vortex?
 
-	xk = (kkk - x1) / (x2-x1);
-	if (kkk > x2) // cell is in LES region
-	  {
-	    nut_[I] = nuSGS[I]; 
-	    rans[I] = 0;
-	   }
-
-	else
-	  {
-	   if (kkk > x1) // cell is buffer region between URANS and LES (see hybrid model desc.)
-	     {
-	       nut_[I] = (nut_[I]-nuSGS[I])/3.1415*atan(-40*xk/(x2-x1)+10*(x2+x1)/(x2-x1))+0.5*(nut_[I]+nuSGS[I]);
-	       rans[I] = 1-xk;
-	     }
-	  }        
-      }
+	    xk = ( LtoDRatio - x1 ) / ( x2 - x1 ); 
+	    if ( LtoDRatio > x2 ) 
+	    {
+	        nut_[I] = nuSGS[I];   // cell is in LES regio
+	        rans[I] = 0;
+	    }
+	    else
+	    {
+	        if ( LtoDRatio > x1 ) // cell is buffer region between URANS and LES (see hybrid model desc.)
+	        {
+	            nut_[I] =  ( nut_[I] - nuSGS[I] ) / 3.1415*atan(-40*xk/(x2-x1) + 10*(x2+x1)/(x2-x1) )  +  0.5*(nut_[I]+nuSGS[I]);
+	            rans[I] = 1 - xk;
+	        }
+	    }        
+    }
 
 }
 

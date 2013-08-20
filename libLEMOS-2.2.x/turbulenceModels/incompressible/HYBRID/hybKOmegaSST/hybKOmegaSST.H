@@ -55,10 +55,10 @@ SourceFiles
 #ifndef hybKOmegaSST_H
 #define hybKOmegaSST_H
 
-#include "incompressible/RAS/RASModel/RASModel.H"
+#include "RASModel.H"
 #include "wallDist.H"
-#include "LESdelta.H"
-#include "LESfilter.H"
+#include "../../../LES/LESdeltas/LESdelta/LESdelta.H"
+#include "../../../LES/LESfilters/LESfilter/LESfilter.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -80,44 +80,50 @@ class hybKOmegaSST
     // Private data
 
         // Model coefficients
-            dimensionedScalar alphaK1_;
-            dimensionedScalar alphaK2_;
+        dimensionedScalar alphaK1_;
+        dimensionedScalar alphaK2_;
 
-            dimensionedScalar alphaOmega1_;
-            dimensionedScalar alphaOmega2_;
+        dimensionedScalar alphaOmega1_;
+        dimensionedScalar alphaOmega2_;
 
-            dimensionedScalar gamma1_;
-            dimensionedScalar gamma2_;
+        dimensionedScalar gamma1_;
+        dimensionedScalar gamma2_;
 
-            dimensionedScalar beta1_;
-            dimensionedScalar beta2_;
+        dimensionedScalar beta1_;
+        dimensionedScalar beta2_;
 
-            dimensionedScalar betaStar_;
+        dimensionedScalar betaStar_;
 
-            dimensionedScalar a1_;
-            dimensionedScalar c1_;
+        dimensionedScalar a1_;
+        dimensionedScalar c1_;
+        
+        // control parameters for hybrid approach
  
-	    dimensionedScalar Cint;
-            dimensionedScalar omegaSmall_; 
-
+	    dimensionedScalar Cint_;        // how many cells we need to resolve a vortex ??
+	    dimensionedScalar CN_;
+	    
+	    volScalarField  d_;  // characteristic size of the cell = sqrt ( 0.5 * ( dMax*dMax + deltaLES*deltaLES ) )
+	    
+	    dimensionedScalar x1_;          // value of L to d ratio , when the smooting starts and finises
+	    dimensionedScalar x2_;          //     
+	             
+        dimensionedScalar omegaSmall_; 
 
         //- Wall distance field
         //  Note: different to wall distance in parent RASModel
+        
         wallDist y_;
 
         // Fields
 
-            volScalarField k_;
-            volScalarField omega_;
-            volScalarField nut_;
-            volScalarField dMax;
-            volScalarField rans;
+        volScalarField k_;
+        volScalarField omega_;
+        volScalarField nut_;
+        volScalarField rans;
 
 	    autoPtr<LESfilter> filterPtr_;
-            LESfilter& filter_;
-            autoPtr<LESdelta> delta_;
-
-
+        LESfilter& filter_;
+        autoPtr<LESdelta> delta_;
 
     // Private member functions
 
