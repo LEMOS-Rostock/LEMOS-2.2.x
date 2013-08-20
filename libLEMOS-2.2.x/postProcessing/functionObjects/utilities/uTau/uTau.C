@@ -309,6 +309,10 @@ void Foam::uTau::end()
     // Do nothing - only valid on write
 }
 
+void Foam::uTau::timeSet()
+{
+    // Do nothing
+}
 
 void Foam::uTau::write()
 {

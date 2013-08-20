@@ -212,6 +212,9 @@ public:
 
         //- Calculate the uTau and write
         virtual void write();
+
+        //- Called when time was set at the end of the Time::operator++
+        virtual void timeSet();
   
         //- Update for changes of mesh
         virtual void updateMesh(const mapPolyMesh&)
