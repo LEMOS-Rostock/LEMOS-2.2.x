@@ -484,7 +484,7 @@ void hybKOmegaSST::correct()
     nut_ = a1_*k_/max(a1_*omega_, F2()*sqrt(S2));
     nut_.correctBoundaryConditions();
 
-    volScalarField lPrandtl = 1/0.55*pow(k_,1/2)/(omega_ + omegaSmall_); // integral length scale
+    volScalarField lPrandtl = 1.0/0.55*pow(k_,1.0/2.0)/(omega_ + omegaSmall_); // integral length scale
     volSymmTensorField D = dev(symm(fvc::grad(U_)));
     volScalarField nuSGS = mag(cD(D))*sqr(delta())*sqrt(2*magSqr(D)); // SGS stress using DSM
  
