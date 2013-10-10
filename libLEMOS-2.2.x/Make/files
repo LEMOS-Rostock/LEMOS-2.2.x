@@ -1,6 +1,18 @@
 boundaryConditions/inflowGenerator/decayingVorton.C
 boundaryConditions/inflowGenerator/decayingTurbulenceFvPatchVectorField.C
 
+OpenFOAM/matrices/scalarMatrices/SVD/SVD.C
+OpenFOAM/matrices/scalarMatrices/scalarMatrices.C
+
+OpenFOAM/interpolations/RBFInterpolation/RBFInterpolation.C
+OpenFOAM/interpolations/RBFInterpolation/RBFFunctions/RBFFunction/RBFFunction.C
+OpenFOAM/interpolations/RBFInterpolation/RBFFunctions/RBFFunction/newRBFFunction.C
+OpenFOAM/interpolations/RBFInterpolation/RBFFunctions/W2/W2.C
+OpenFOAM/interpolations/RBFInterpolation/RBFFunctions/Gauss/Gauss.C
+OpenFOAM/interpolations/RBFInterpolation/RBFFunctions/TPS/TPS.C
+OpenFOAM/interpolations/RBFInterpolation/RBFFunctions/IMQB/IMQB.C
+meshMotion/RBFMotionSolver/RBFMotionSolver.C
+
 turbulenceModels/incompressible/HYBRID/hybKOmegaSST/hybKOmegaSST.C
 turbulenceModels/incompressible/HYBRID/hybDynV2F/hybDynV2F.C
 turbulenceModels/incompressible/LES/dynamicMixedModel/dynamicMixedModel.C
