@@ -273,11 +273,11 @@ Foam::RBFMotionSolver::RBFMotionSolver
 )
 :
     motionSolver(mesh,dict,typeName),
-    movingPatches_(lookup("movingPatches")),
-    staticPatches_(lookup("staticPatches")),
-    coarseningRatio_(readLabel(lookup("coarseningRatio"))),
-    includeStaticPatches_(lookup("includeStaticPatches")),
-    frozenInterpolation_(lookup("frozenInterpolation")),
+    movingPatches_(coeffDict().lookup("movingPatches")),
+    staticPatches_(coeffDict().lookup("staticPatches")),
+    coarseningRatio_(readLabel(coeffDict().lookup("coarseningRatio"))),
+    includeStaticPatches_(coeffDict().lookup("includeStaticPatches")),
+    frozenInterpolation_(coeffDict().lookup("frozenInterpolation")),
     movingIDs_(0),
     movingPoints_(0),
     staticIDs_(0),
@@ -288,7 +288,7 @@ Foam::RBFMotionSolver::RBFMotionSolver
     motion_(0),
     interpolation_
     (
-        subDict("interpolation"),
+        coeffDict().subDict("interpolation"),
         controlPoints_,
         internalPoints_
     )
