@@ -13,6 +13,8 @@ OpenFOAM/interpolations/RBFInterpolation/RBFFunctions/TPS/TPS.C
 OpenFOAM/interpolations/RBFInterpolation/RBFFunctions/IMQB/IMQB.C
 meshMotion/RBFMotionSolver/RBFMotionSolver.C
 
+OpenFOAM/dimensionedTypes/dimensionedDiagTensor/dimensionedDiagTensor.C
+
 turbulenceModels/incompressible/HYBRID/hybKOmegaSST/hybKOmegaSST.C
 turbulenceModels/incompressible/HYBRID/hybDynV2F/hybDynV2F.C
 turbulenceModels/incompressible/LES/dynamicMixedModel/dynamicMixedModel.C
@@ -20,5 +22,29 @@ turbulenceModels/incompressible/LES/LDMMS/LDMMS.C
 
 postProcessing/functionObjects/utilities/uTau/uTau.C
 postProcessing/functionObjects/utilities/uTau/uTauFunctionObject.C
+
+postProcessing/POD/PODEigenBase/PODEigenBase.C
+postProcessing/POD/PODOrthoNormalBase/scalarPODOrthoNormalBase.C
+postProcessing/POD/PODODE/PODODE.C
+postProcessing/POD/scalarTransportPOD/scalarTransportPOD.C
+
+ODESolvers  =  ODE/ODESolvers
+$(ODESolvers)/ODESolver/ODESolver.C
+$(ODESolvers)/ODESolver/newODESolver.C
+
+$(ODESolvers)/Euler/Euler.C
+$(ODESolvers)/RK/RK.C
+$(ODESolvers)/KRR4/KRR4.C
+$(ODESolvers)/SIBS/SIBS.C
+$(ODESolvers)/SIBS/SIMPR.C
+$(ODESolvers)/SIBS/polyExtrapolate.C
+
+translationODE = ODE/translationODE
+$(translationODE)/translationODE.C
+
+sixDOF = ODE/sixDOF
+$(sixDOF)/finiteRotation/finiteRotation.C
+$(sixDOF)/sixDOFqODE/sixDOFqODE.C
+$(sixDOF)/sixDOFbodies/sixDOFbodies.C
 
 LIB = $(FOAM_LIBBIN)/libLEMOS-2.2.x
