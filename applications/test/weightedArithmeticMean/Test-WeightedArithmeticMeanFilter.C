@@ -1,12 +1,12 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+  \\      /  F ield         | Unsupported Contributions for OpenFOAM
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2012 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013 LEMOS, University Rostock
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
-    This file is part of OpenFOAM.
+    This file is a derivative work of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -22,10 +22,10 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    testArithmeticMeanFilter
+    Test-WeightedArithmeticMeanFilter
 
 Description
-    Test app for arithmetic mean filter.
+    Test app for weighted arithmetic mean filter.
 
 \*---------------------------------------------------------------------------*/
 
