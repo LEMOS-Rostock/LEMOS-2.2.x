@@ -26,8 +26,21 @@ Class
 
 Description
     Simple weighted arithmetic mean filter using point connected cell stencil. 
-    Central stencil element is weighted by alpha and surrounding elements 
-    by beta. 
+    Central stencil element is weighted by alpha, all other stencil elements 
+    by beta.
+ 
+    \verbatim
+
+    mean                   alpha	beta		Definition
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    arithmetic mean:	   1.0		1.0     	(x_1+...+x_n)/n
+
+    weighted 			
+    arithmetic mean:	   > 1.0	> 1.0           (alpha*x_1+
+							 beta*(x_2+...+x_n)
+							)/(alpha+beta*(n-1))
+   
+    \endverbatim
 
 SourceFiles
     weightedArithmeticMeanFilter.C
@@ -68,7 +81,7 @@ class weightedArithmeticMeanFilter
 	//- Weight central stencil element
         scalar alpha_;
 
-	//- Weight surrounding stencil element
+	//- Weight surrounding stencil elements
 	scalar beta_;
 
 public:
