@@ -60,16 +60,16 @@ weightedArithmeticMeanFilter::weightedArithmeticMeanFilter(const fvMesh& mesh, c
 :
     LESfilter(mesh),
     addressing_(centredCPCCellToCellExtStencilObject::New(mesh)),
-    alpha_(readScalar(dict.subDict(type() + "Coeffs").lookup("alpha"))),
-    beta_(readScalar(dict.subDict(type() + "Coeffs").lookup("beta")))
+    alpha_(dict.subDict(type() + "Coeffs").lookupOrDefault<scalar>("alpha", 1.0)),
+    beta_(dict.subDict(type() + "Coeffs").lookupOrDefault<scalar>("beta", 1.0))
 {}
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 void weightedArithmeticMeanFilter::read(const dictionary& dict)
 {
-    dict.subDict(type() + "Coeffs").lookup("alpha") >> alpha_;
-    dict.subDict(type() + "Coeffs").lookup("beta") >> beta_;
+    dict.subDict(type() + "Coeffs").readIfPresent<scalar>("alpha", alpha_);
+    dict.subDict(type() + "Coeffs").readIfPresent<scalar>("beta", beta_);
 }
 
 
