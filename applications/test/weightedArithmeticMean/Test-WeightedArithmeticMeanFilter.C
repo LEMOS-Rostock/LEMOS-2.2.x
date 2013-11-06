@@ -1,0 +1,89 @@
+/*---------------------------------------------------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     |
+    \\  /    A nd           | Copyright (C) 2012 OpenFOAM Foundation
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
+License
+    This file is part of OpenFOAM.
+
+    OpenFOAM is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+    for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
+Application
+    testArithmeticMeanFilter
+
+Description
+    Test app for arithmetic mean filter.
+
+\*---------------------------------------------------------------------------*/
+
+#include "argList.H"
+#include "fvMesh.H"
+#include "volFields.H"
+#include "surfaceFields.H"
+#include "Time.H"
+#include "OFstream.H"
+#include "meshTools.H"
+#include "weightedArithmeticMeanFilter.H"
+
+
+using namespace Foam;
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+int main(int argc, char *argv[])
+{
+#   include "addTimeOptions.H"
+#   include "setRootCase.H"
+#   include "createTime.H"
+#   include "createMesh.H"
+
+    volVectorField U
+    (
+        IOobject
+	(
+	    "U",
+	    runTime.timeName(),
+	    mesh,
+	    IOobject::MUST_READ,
+	    IOobject::AUTO_WRITE
+	),
+	mesh
+    );
+
+    // Weight alpha
+    scalar alpha = 1.0;
+
+    // Weight beta
+    scalar beta = 1.0;
+
+    // weightedArithmeticMeanFilter using all point connected
+    // cells or boundary faces to given cell
+    weightedArithmeticMeanFilter filter(mesh, alpha, beta);
+
+    // Applying the filter
+    filter(U);
+
+    runTime++;
+
+    U.write();
+
+    Pout<< "End\n" << endl;
+
+    return 0;
+}
+
+
+// ************************************************************************* //
