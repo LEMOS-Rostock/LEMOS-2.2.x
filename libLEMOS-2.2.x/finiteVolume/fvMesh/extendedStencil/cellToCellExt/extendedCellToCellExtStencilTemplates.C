@@ -150,11 +150,15 @@ Foam::tmp
 
     WeightedFieldType& wf = twf();
 
+
     forAll(wf, celli)
     {
         const List<Type>& stField = stencilFld[celli];
         const List<WeightType>& stWeight = stencilWeights[celli];
 
+	// Delete old value
+        // Note: (wf = pTraits<WeightedType>::zero;) possibly better alternative?
+        wf[celli] = pTraits<WeightedType>::zero;
         forAll(stField, i)
         {
             wf[celli] += stWeight[i]*stField[i];
