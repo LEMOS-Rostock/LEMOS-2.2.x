@@ -53,7 +53,9 @@ weightedArithmeticMeanFilter::weightedArithmeticMeanFilter
     addressing_(centredCPCCellToCellExtStencilObject::New(mesh)),
     alpha_(alpha),
     beta_(beta)
-{}
+{
+    stencilWeights(alpha_, beta_);
+}
 
 
 weightedArithmeticMeanFilter::weightedArithmeticMeanFilter(const fvMesh& mesh, const dictionary& dict)
@@ -62,7 +64,9 @@ weightedArithmeticMeanFilter::weightedArithmeticMeanFilter(const fvMesh& mesh, c
     addressing_(centredCPCCellToCellExtStencilObject::New(mesh)),
     alpha_(dict.subDict(type() + "Coeffs").lookupOrDefault<scalar>("alpha", 1.0)),
     beta_(dict.subDict(type() + "Coeffs").lookupOrDefault<scalar>("beta", 1.0))
-{}
+{
+    stencilWeights(alpha_, beta_);
+}
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
@@ -70,8 +74,48 @@ void weightedArithmeticMeanFilter::read(const dictionary& dict)
 {
     dict.subDict(type() + "Coeffs").readIfPresent<scalar>("alpha", alpha_);
     dict.subDict(type() + "Coeffs").readIfPresent<scalar>("beta", beta_);
+
+    stencilWeights(alpha_, beta_);
 }
 
+void weightedArithmeticMeanFilter::stencilWeights(scalar alpha, scalar beta)
+{
+    const labelListList& untransformedElements = addressing_.untransformedElements();
+    const labelListList& transformedElements = addressing_.transformedElements();
+
+    stencilWeights_.resize(mesh().nCells());
+
+    forAll(stencilWeights_, stencilWeightsI)
+    {
+	label nElements = untransformedElements[stencilWeightsI].size() + transformedElements[stencilWeightsI].size();
+
+        List<scalar>& stencilWeight = stencilWeights_[stencilWeightsI];
+	stencilWeight.clear();
+
+	if(nElements > 0)
+	{	
+	    scalar sumWeight = alpha + beta*(nElements-1);
+
+	    stencilWeight.append(alpha/sumWeight);
+	    nElements--;
+
+	    while(nElements)
+	    {
+	        stencilWeight.append(beta/sumWeight);
+	        
+                nElements--;
+	    }
+	}
+    }
+}
+
+void weightedArithmeticMeanFilter::updateStencil()
+{
+    // ToDo: recreate stencil after mesh changing
+    //addressing_ = (centredCPCCellToCellExtStencilObject::New(mesh()));
+
+    //stencilWeights(alpha_, beta_);
+}
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
@@ -81,43 +125,11 @@ Foam::tmp<Foam::volVectorField> Foam::weightedArithmeticMeanFilter::operator()
     const tmp<volVectorField>& unFilteredField
 ) const 
 {
-    List<List<vector> > stencilData(mesh().nCells());
-
-    addressing_.collectData
-    (
-        unFilteredField(),
-        stencilData
-    );
-
-    tmp<volVectorField> filteredField = unFilteredField();
-
-    forAll(filteredField(), cellI)
-    {
-        List<vector>& cStencil = stencilData[cellI];
-
-	vector& vvf = filteredField()[cellI];
-	vvf = pTraits<vector>::zero;
-        
-	if(cStencil.size() > 0)
-	{
-	    label cStencilI = 0;
-
-	    vvf = alpha_ * cStencil[cStencilI++];
-
-            while(cStencilI < cStencil.size())
-	    {
-	        vvf += beta_ * cStencil[cStencilI++];
-	    }
-	
-	    vvf /= (alpha_ + beta_ * (cStencil.size()-1));
-	}
-    }
-  
-    filteredField().correctBoundaryConditions();
+    tmp<volVectorField> filteredField = addressing_.weightedSum(unFilteredField(), stencilWeights_);
 
     unFilteredField.clear();
 
-    return filteredField();
+    return filteredField;
 }
 
 Foam::tmp<Foam::volScalarField> Foam::weightedArithmeticMeanFilter::operator()
@@ -125,43 +137,11 @@ Foam::tmp<Foam::volScalarField> Foam::weightedArithmeticMeanFilter::operator()
     const tmp<volScalarField>& unFilteredField
 ) const
 {
-    List<List<scalar> > stencilData(mesh().nCells());
-
-    addressing_.collectData
-    (
-        unFilteredField(),
-        stencilData
-    );
-
-    tmp<volScalarField> filteredField = unFilteredField();
-
-    forAll(filteredField(), cellI)
-    {
-        List<scalar>& cStencil = stencilData[cellI];
-
-        scalar& vvf = filteredField()[cellI];
-        vvf = 0.0;
-
-        if(cStencil.size() > 0)
-        {
-            label cStencilI = 0;
-
-            vvf = alpha_ * cStencil[cStencilI++];
-
-            while(cStencilI < cStencil.size())
-            {
-                vvf += beta_ * cStencil[cStencilI++];
-            }
-
-	    vvf /= (alpha_ + beta_ * (cStencil.size()-1));
-        }
-    }
-
-    filteredField().correctBoundaryConditions();
+    tmp<volScalarField> filteredField = addressing_.weightedSum(unFilteredField(), stencilWeights_);
 
     unFilteredField.clear();
 
-    return unFilteredField;
+    return filteredField;
 }
 
 Foam::tmp<Foam::volSymmTensorField> Foam::weightedArithmeticMeanFilter::operator()
@@ -169,39 +149,7 @@ Foam::tmp<Foam::volSymmTensorField> Foam::weightedArithmeticMeanFilter::operator
     const tmp<volSymmTensorField>& unFilteredField
 ) const
 {
-    List<List<symmTensor> > stencilData(mesh().nCells());
-
-    addressing_.collectData
-    (
-        unFilteredField(),
-        stencilData
-    );
-
-    tmp<volSymmTensorField> filteredField = unFilteredField();
-
-    forAll(filteredField(), cellI)
-    {
-        List<symmTensor>& cStencil = stencilData[cellI];
-
-        symmTensor& vvf = filteredField()[cellI];
-        vvf = pTraits<symmTensor>::zero;;
-
-        if(cStencil.size() > 0)
-        {
-            label cStencilI = 0;
-
-            vvf = alpha_ * cStencil[cStencilI++];
-
-            while(cStencilI < cStencil.size())
-            {
-                vvf += beta_ * cStencil[cStencilI++];
-            }
-
-	    vvf /= (alpha_ + beta_ * (cStencil.size()-1));
-        }
-    }
-
-    filteredField().correctBoundaryConditions();
+    tmp<volSymmTensorField> filteredField = addressing_.weightedSum(unFilteredField(), stencilWeights_);
 
     unFilteredField.clear();
 
@@ -213,39 +161,7 @@ Foam::tmp<Foam::volTensorField> Foam::weightedArithmeticMeanFilter::operator()
     const tmp<volTensorField>& unFilteredField
 ) const
 {
-    List<List<tensor> > stencilData(mesh().nCells());
-
-    addressing_.collectData
-    (
-        unFilteredField(),
-        stencilData
-    );
-
-    tmp<volTensorField> filteredField = unFilteredField();
-
-    forAll(filteredField(), cellI)
-    {
-        List<tensor>& cStencil = stencilData[cellI];
-
-        tensor& vvf = filteredField()[cellI];
-        vvf = pTraits<tensor>::zero;;
-
-        if(cStencil.size() > 0)
-        {
-            label cStencilI = 0;
-
-            vvf = alpha_ * cStencil[cStencilI++];
-
-            while(cStencilI < cStencil.size())
-            {
-                vvf += beta_ * cStencil[cStencilI++];
-            }
-
-	    vvf /= (alpha_ + beta_ * (cStencil.size()-1));
-        }
-    }
-
-    filteredField().correctBoundaryConditions();
+    tmp<volTensorField> filteredField = addressing_.weightedSum(unFilteredField(), stencilWeights_);
 
     unFilteredField.clear();
 

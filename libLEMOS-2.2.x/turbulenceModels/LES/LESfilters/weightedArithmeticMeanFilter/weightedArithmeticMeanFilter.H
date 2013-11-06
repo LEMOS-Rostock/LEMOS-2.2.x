@@ -78,11 +78,14 @@ class weightedArithmeticMeanFilter
 
         const extendedCentredCellToCellExtStencil& addressing_;
 
-	//- Weight central stencil element
-        scalar alpha_;
+	//- Weight alpha for central stencil element
+	scalar alpha_;
 
-	//- Weight surrounding stencil elements
+	//- Weight beta for all other stencil elements
 	scalar beta_;
+
+	//- Stencil weights 
+	List<List<scalar> > stencilWeights_;
 
 public:
 
@@ -110,6 +113,11 @@ public:
         //- Read the LESfilter dictionary
         void read(const dictionary& dict);
 
+        //- Arrange element weights in stencil order 
+        void stencilWeights(scalar alpha, scalar beta);
+
+        //- Update stencil and dependencies after mesh changing
+        void updateStencil();
 
     // Member Operators
     
