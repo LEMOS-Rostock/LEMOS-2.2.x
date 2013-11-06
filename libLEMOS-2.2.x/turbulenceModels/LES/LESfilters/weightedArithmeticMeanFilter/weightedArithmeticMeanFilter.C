@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "arithmeticMeanFilter.H"
+#include "weightedArithmeticMeanFilter.H"
 #include "addToRunTimeSelectionTable.H"
 #include "fvc.H"
 #include "OFstream.H"
@@ -36,13 +36,13 @@ namespace Foam
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-defineTypeNameAndDebug(arithmeticMeanFilter, 0);
-addToRunTimeSelectionTable(LESfilter, arithmeticMeanFilter, dictionary);
+defineTypeNameAndDebug(weightedArithmeticMeanFilter, 0);
+addToRunTimeSelectionTable(LESfilter, weightedArithmeticMeanFilter, dictionary);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 // from components
-arithmeticMeanFilter::arithmeticMeanFilter
+weightedArithmeticMeanFilter::weightedArithmeticMeanFilter
 (
     const fvMesh& mesh,
     scalar alpha,
@@ -56,7 +56,7 @@ arithmeticMeanFilter::arithmeticMeanFilter
 {}
 
 
-arithmeticMeanFilter::arithmeticMeanFilter(const fvMesh& mesh, const dictionary& dict)
+weightedArithmeticMeanFilter::weightedArithmeticMeanFilter(const fvMesh& mesh, const dictionary& dict)
 :
     LESfilter(mesh),
     addressing_(centredCPCCellToCellExtStencilObject::New(mesh)),
@@ -66,7 +66,7 @@ arithmeticMeanFilter::arithmeticMeanFilter(const fvMesh& mesh, const dictionary&
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void arithmeticMeanFilter::read(const dictionary& dict)
+void weightedArithmeticMeanFilter::read(const dictionary& dict)
 {
     dict.subDict(type() + "Coeffs").lookup("alpha") >> alpha_;
     dict.subDict(type() + "Coeffs").lookup("beta") >> beta_;
@@ -76,7 +76,7 @@ void arithmeticMeanFilter::read(const dictionary& dict)
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
 
-Foam::tmp<Foam::volVectorField> Foam::arithmeticMeanFilter::operator()
+Foam::tmp<Foam::volVectorField> Foam::weightedArithmeticMeanFilter::operator()
 (
     const tmp<volVectorField>& unFilteredField
 ) const 
@@ -109,7 +109,7 @@ Foam::tmp<Foam::volVectorField> Foam::arithmeticMeanFilter::operator()
 	        vvf += beta_ * cStencil[cStencilI++];
 	    }
 	
-	    vvf /= cStencil.size();
+	    vvf /= (alpha_ + beta_ * (cStencil.size()-1));
 	}
     }
   
@@ -120,7 +120,7 @@ Foam::tmp<Foam::volVectorField> Foam::arithmeticMeanFilter::operator()
     return filteredField();
 }
 
-Foam::tmp<Foam::volScalarField> Foam::arithmeticMeanFilter::operator()
+Foam::tmp<Foam::volScalarField> Foam::weightedArithmeticMeanFilter::operator()
 (
     const tmp<volScalarField>& unFilteredField
 ) const
@@ -153,7 +153,7 @@ Foam::tmp<Foam::volScalarField> Foam::arithmeticMeanFilter::operator()
                 vvf += beta_ * cStencil[cStencilI++];
             }
 
-            vvf /= cStencil.size();
+	    vvf /= (alpha_ + beta_ * (cStencil.size()-1));
         }
     }
 
@@ -164,7 +164,7 @@ Foam::tmp<Foam::volScalarField> Foam::arithmeticMeanFilter::operator()
     return unFilteredField;
 }
 
-Foam::tmp<Foam::volSymmTensorField> Foam::arithmeticMeanFilter::operator()
+Foam::tmp<Foam::volSymmTensorField> Foam::weightedArithmeticMeanFilter::operator()
 (
     const tmp<volSymmTensorField>& unFilteredField
 ) const
@@ -197,7 +197,7 @@ Foam::tmp<Foam::volSymmTensorField> Foam::arithmeticMeanFilter::operator()
                 vvf += beta_ * cStencil[cStencilI++];
             }
 
-            vvf /= cStencil.size();
+	    vvf /= (alpha_ + beta_ * (cStencil.size()-1));
         }
     }
 
@@ -208,7 +208,7 @@ Foam::tmp<Foam::volSymmTensorField> Foam::arithmeticMeanFilter::operator()
     return filteredField;
 }
 
-Foam::tmp<Foam::volTensorField> Foam::arithmeticMeanFilter::operator()
+Foam::tmp<Foam::volTensorField> Foam::weightedArithmeticMeanFilter::operator()
 (
     const tmp<volTensorField>& unFilteredField
 ) const
@@ -241,7 +241,7 @@ Foam::tmp<Foam::volTensorField> Foam::arithmeticMeanFilter::operator()
                 vvf += beta_ * cStencil[cStencilI++];
             }
 
-            vvf /= cStencil.size();
+	    vvf /= (alpha_ + beta_ * (cStencil.size()-1));
         }
     }
 

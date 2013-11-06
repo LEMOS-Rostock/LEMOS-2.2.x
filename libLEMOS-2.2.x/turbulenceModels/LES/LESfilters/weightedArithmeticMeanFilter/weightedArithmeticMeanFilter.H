@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::arithmeticMeanFilter
+    Foam::weightedArithmeticMeanFilter
 
 Description
     Simple weighted arithmetic mean filter using point connected cell stencil. 
@@ -30,12 +30,12 @@ Description
     by beta. 
 
 SourceFiles
-    arithmeticMeanFilter.C
+    weightedArithmeticMeanFilter.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef arithmeticMeanFilter_H
-#define arithmeticMeanFilter_H
+#ifndef weightedArithmeticMeanFilter_H
+#define weightedArithmeticMeanFilter_H
 
 #include "LESfilter.H"
 #include "centredCPCCellToCellExtStencilObject.H"
@@ -52,7 +52,7 @@ namespace Foam
                            Class legendreFilter Declaration
 \*---------------------------------------------------------------------------*/
 
-class arithmeticMeanFilter
+class weightedArithmeticMeanFilter
 :
     public LESfilter
 
@@ -60,8 +60,8 @@ class arithmeticMeanFilter
     // Private Member Functions
 
         //- Disallow default bitwise copy construct and assignment
-        arithmeticMeanFilter(const arithmeticMeanFilter&);
-        void operator=(const arithmeticMeanFilter&);
+        weightedArithmeticMeanFilter(const weightedArithmeticMeanFilter&);
+        void operator=(const weightedArithmeticMeanFilter&);
 
         const extendedCentredCellToCellExtStencil& addressing_;
 
@@ -74,20 +74,20 @@ class arithmeticMeanFilter
 public:
 
     //- Runtime type information
-    TypeName("arithmeticMean");
+    TypeName("weightedArithmeticMean");
 
 
     // Constructors
 
         //- from components
-        arithmeticMeanFilter(const fvMesh& mesh, scalar alpha, scalar beta);
+        weightedArithmeticMeanFilter(const fvMesh& mesh, scalar alpha, scalar beta);
 
         //- from IOdictionary
-        arithmeticMeanFilter(const fvMesh& mesh, const dictionary& dict);
+        weightedArithmeticMeanFilter(const fvMesh& mesh, const dictionary& dict);
 
 
     // Destructor
-    virtual ~arithmeticMeanFilter()
+    virtual ~weightedArithmeticMeanFilter()
     {}
 
 

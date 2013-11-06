@@ -22,7 +22,7 @@ $(cellToCellExt)/globalIndexStencils/cellToCellExtStencil.C
 $(cellToCellExt)/globalIndexStencils/CPCCellToCellExtStencil.C
 $(cellToCellExt)/MeshObjects/centredCPCCellToCellExtStencilObject.C
 
-turbulenceModels/LES/LESfilters/arithmeticMeanFilter/arithmeticMeanFilter.C
+turbulenceModels/LES/LESfilters/weightedArithmeticMeanFilter/weightedArithmeticMeanFilter.C
 turbulenceModels/incompressible/HYBRID/hybKOmegaSST/hybKOmegaSST.C
 turbulenceModels/incompressible/HYBRID/hybDynV2F/hybDynV2F.C
 turbulenceModels/incompressible/LES/dynamicMixedModel/dynamicMixedModel.C
