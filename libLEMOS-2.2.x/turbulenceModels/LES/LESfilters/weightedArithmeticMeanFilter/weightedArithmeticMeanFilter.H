@@ -31,7 +31,7 @@ Description
  
     \verbatim
 
-    mean                   alpha	beta		Definition
+    mean                   alpha        beta            Definition
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     arithmetic mean:       1.0          1.0             (x_1+...+x_n)/n
 
