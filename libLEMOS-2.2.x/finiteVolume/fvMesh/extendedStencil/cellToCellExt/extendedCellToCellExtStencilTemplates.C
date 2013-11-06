@@ -116,11 +116,16 @@ Foam::tmp
     typedef GeometricField<WeightedType, fvPatchField, volMesh>
         WeightedFieldType;
 
-    const fvMesh& mesh = fld.mesh();
-
     // Collect internal and boundary values
     List<List<Type> > stencilFld;
     collectData(map, untransformedElements, transformedElements, fld, stencilFld, top);
+
+    // Copy original field to keep same boundary conditions in new field    
+    // Note: implementation needs to be revised!  
+    tmp<WeightedFieldType> twf = fld;
+
+/*
+    const fvMesh& mesh = fld.mesh();
 
     tmp<WeightedFieldType> twf
     (
@@ -141,6 +146,8 @@ Foam::tmp
             )
         )
     );
+*/
+
     WeightedFieldType& wf = twf();
 
     forAll(wf, celli)
@@ -156,34 +163,9 @@ Foam::tmp
 
     // Boundaries values?
 
-    /*
-    // Boundaries. Either constrained or calculated so assign value
-    // directly (instead of nicely using operator==)
-    typename GeometricField<Type, fvsPatchField, surfaceMesh>::
-    GeometricBoundaryField& bSfCorr = sf.boundaryField();
+    // Boundary Conditions taken from original fld and corrected
+    wf.correctBoundaryConditions();
     
-    forAll(bSfCorr, patchi)
-    {
-        fvsPatchField<Type>& pSfCorr = bSfCorr[patchi];
-        
-        if (pSfCorr.coupled())
-   	{
-    	    label faceI = pSfCorr.patch().start();
-    	    forAll(pSfCorr, i)
-    	    {
-    		const List<Type>& stField = stencilFld[faceI];
-    		const List<scalar>& stWeight = stencilWeights[faceI];
-    	    	forAll(stField, j)
-    		{
-                    pSfCorr[i] += stField[j]*stWeight[j];
-	   	}
-    		
-		faceI++;
-	    }
-	}
-    }
-    */
-
     return twf;
 }
 

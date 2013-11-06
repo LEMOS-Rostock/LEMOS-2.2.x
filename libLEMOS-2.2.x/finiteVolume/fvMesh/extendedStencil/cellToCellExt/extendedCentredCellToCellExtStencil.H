@@ -169,7 +169,8 @@ public:
                 untransformedElements(),
                 transformedElements(),
                 fld,
-                stencilWeights
+                stencilWeights,
+                mapDistribute::transform()
             );
         }
 };
