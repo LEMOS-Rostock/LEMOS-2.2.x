@@ -33,10 +33,10 @@ Description
 
     mean                   alpha	beta		Definition
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    arithmetic mean:	   1.0		1.0		(x_1+...+x_n)/n
+    arithmetic mean:       1.0          1.0             (x_1+...+x_n)/n
 
-    weighted 			
-    arithmetic mean:	   > 1.0	> 1.0		(alpha*x_1+
+    weighted
+    arithmetic mean:       > 1.0        > 1.0           (alpha*x_1+
                                                          beta*(x_2+...+x_n)
                                                         )/(alpha+beta*(n-1))
    
