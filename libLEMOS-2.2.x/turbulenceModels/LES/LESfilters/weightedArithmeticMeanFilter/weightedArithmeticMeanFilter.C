@@ -125,7 +125,7 @@ Foam::tmp<Foam::volVectorField> Foam::weightedArithmeticMeanFilter::operator()
     const tmp<volVectorField>& unFilteredField
 ) const 
 {
-    tmp<volVectorField> filteredField = addressing_.weightedSum(unFilteredField(), stencilWeights_);
+    const tmp<volVectorField>& filteredField = addressing_.weightedSum(unFilteredField(), stencilWeights_);
 
     unFilteredField.clear();
 
@@ -137,7 +137,7 @@ Foam::tmp<Foam::volScalarField> Foam::weightedArithmeticMeanFilter::operator()
     const tmp<volScalarField>& unFilteredField
 ) const
 {
-    tmp<volScalarField> filteredField = addressing_.weightedSum(unFilteredField(), stencilWeights_);
+    const tmp<volScalarField>& filteredField = addressing_.weightedSum(unFilteredField(), stencilWeights_);
 
     unFilteredField.clear();
 
@@ -149,7 +149,7 @@ Foam::tmp<Foam::volSymmTensorField> Foam::weightedArithmeticMeanFilter::operator
     const tmp<volSymmTensorField>& unFilteredField
 ) const
 {
-    tmp<volSymmTensorField> filteredField = addressing_.weightedSum(unFilteredField(), stencilWeights_);
+    const tmp<volSymmTensorField>& filteredField = addressing_.weightedSum(unFilteredField(), stencilWeights_);
 
     unFilteredField.clear();
 
@@ -161,7 +161,7 @@ Foam::tmp<Foam::volTensorField> Foam::weightedArithmeticMeanFilter::operator()
     const tmp<volTensorField>& unFilteredField
 ) const
 {
-    tmp<volTensorField> filteredField = addressing_.weightedSum(unFilteredField(), stencilWeights_);
+    const tmp<volTensorField>& filteredField = addressing_.weightedSum(unFilteredField(), stencilWeights_);
 
     unFilteredField.clear();
 
