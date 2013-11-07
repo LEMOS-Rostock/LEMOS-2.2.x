@@ -73,12 +73,10 @@ int main(int argc, char *argv[])
     // cells or boundary faces to given cell
     weightedArithmeticMeanFilter filter(mesh, alpha, beta);
 
-    // Applying the filter
-    filter(U);
-
     runTime++;
 
-    U.write();
+    // Applying the filter and write field
+    filter(U)().write();
 
     Pout<< "End\n" << endl;
 
