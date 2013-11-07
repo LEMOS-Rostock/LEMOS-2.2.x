@@ -26,7 +26,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "extendedCellToCellExtStencil.H"
-//#include "extendedCellToFaceStencil.H"
+#include "zeroGradientFvPatchFields.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 template<class Type, class TransformOp>
@@ -120,11 +120,6 @@ Foam::tmp
     List<List<Type> > stencilFld;
     collectData(map, untransformedElements, transformedElements, fld, stencilFld, top);
 
-    // Copy original field to keep same boundary conditions in new field    
-    // Note: implementation needs to be revised!  
-    tmp<WeightedFieldType> twf = fld;
-
-/*
     const fvMesh& mesh = fld.mesh();
 
     tmp<WeightedFieldType> twf
@@ -143,10 +138,11 @@ Foam::tmp
                 fld.name(),
                 fld.dimensions(),
                 pTraits<WeightedType>::zero
-            )
+            ),
+	    zeroGradientFvPatchField<WeightedType>::typeName
         )
     );
-*/
+
 
     WeightedFieldType& wf = twf();
 
@@ -156,19 +152,13 @@ Foam::tmp
         const List<Type>& stField = stencilFld[celli];
         const List<WeightType>& stWeight = stencilWeights[celli];
 
-	// Delete old value
-        // Note: (wf = pTraits<WeightedType>::zero;) possibly better alternative?
-        wf[celli] = pTraits<WeightedType>::zero;
         forAll(stField, i)
         {
             wf[celli] += stWeight[i]*stField[i];
         }
     }
 
-    // Boundaries values?
-
-    // Boundary Conditions taken from original fld and corrected
-    wf.correctBoundaryConditions();
+    // Boundaries values set to zeroGradient
     
     return twf;
 }
