@@ -1,3 +1,3 @@
-Test-VolWeightedGaussianMeanFilter.C
+Test-VolWeightedGaussianFilter.C
 
-EXE = $(FOAM_USER_APPBIN)/volWeightedGaussianMeanFilter
+EXE = $(FOAM_USER_APPBIN)/volWeightedGaussianFilter
