@@ -255,7 +255,7 @@ Foam::tmp<Foam::volSymmTensorField> Foam::medianFilter::operator()
     
     unFilteredField.clear();
 
-    return filteredField;
+    return tfilteredField;
 }
 
 Foam::tmp<Foam::volTensorField> Foam::medianFilter::operator()
@@ -311,13 +311,12 @@ Foam::tmp<Foam::volTensorField> Foam::medianFilter::operator()
                 median[i] = stencilData[sStencilData][i];
             }
         }
-           
         filteredField[stencilsDataI] = median;
     }
 
     unFilteredField.clear();
 
-    return filteredField;
+    return tfilteredField;
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
