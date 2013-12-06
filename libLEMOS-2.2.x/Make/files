@@ -25,12 +25,15 @@ $(cellToCellExt)/MeshObjects/centredCPCCellToCellExtStencilObject.C
 turbulenceModels/LES/LESfilters/weightedArithmeticMeanFilter/weightedArithmeticMeanFilter.C
 turbulenceModels/LES/LESfilters/volWeightedArithmeticMeanFilter/volWeightedArithmeticMeanFilter.C
 turbulenceModels/LES/LESfilters/medianFilter/medianFilter.C
+turbulenceModels/LES/LESfilters/medianFilter/maximumFilter.C
+turbulenceModels/LES/LESfilters/medianFilter/minimumFilter.C
 turbulenceModels/LES/LESfilters/weightedGaussianFilter/weightedGaussianFilter.C
 turbulenceModels/LES/LESfilters/volWeightedGaussianFilter/volWeightedGaussianFilter.C
 turbulenceModels/incompressible/HYBRID/hybKOmegaSST/hybKOmegaSST.C
 turbulenceModels/incompressible/HYBRID/hybDynV2F/hybDynV2F.C
 turbulenceModels/incompressible/LES/dynamicMixedModel/dynamicMixedModel.C
 turbulenceModels/incompressible/LES/LDMMS/LDMMS.C
+turbulenceModels/incompressible/LES/MFM/MFM.C
 
 postProcessing/functionObjects/utilities/uTau/uTau.C
 postProcessing/functionObjects/utilities/uTau/uTauFunctionObject.C
