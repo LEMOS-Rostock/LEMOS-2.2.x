@@ -33,7 +33,6 @@ turbulenceModels/incompressible/HYBRID/hybKOmegaSST/hybKOmegaSST.C
 turbulenceModels/incompressible/HYBRID/hybDynV2F/hybDynV2F.C
 turbulenceModels/incompressible/LES/dynamicMixedModel/dynamicMixedModel.C
 turbulenceModels/incompressible/LES/LDMMS/LDMMS.C
-turbulenceModels/incompressible/LES/MFM/MFM.C
 
 postProcessing/functionObjects/utilities/uTau/uTau.C
 postProcessing/functionObjects/utilities/uTau/uTauFunctionObject.C
