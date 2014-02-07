@@ -64,6 +64,8 @@ namespace Foam
 {
 namespace incompressible
 {
+namespace PANSModels
+{
 namespace turbulentPrandtlModels
 {
 /*---------------------------------------------------------------------------*\
@@ -145,6 +147,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace turbulentPrandtlModels
+} // End namespace PANSModels
 } // End namespace incompressible
 } // End namespace Foam
 

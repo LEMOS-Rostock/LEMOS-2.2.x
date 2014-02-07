@@ -32,6 +32,8 @@ namespace Foam
 {
 namespace incompressible
 {
+namespace PANSModels
+{
 namespace turbulentPrandtlModels
 {
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -100,6 +102,7 @@ tmp<volScalarField> zeroTransportModel::sigmaOmega() const
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace turbulentPrandtlModels
+} // End namespace PANSModels
 } // End namespace incompressible
 } // End namespace Foam
 

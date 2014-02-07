@@ -32,6 +32,8 @@ namespace Foam
 {
 namespace incompressible
 {
+namespace PANSModels
+{
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -192,6 +194,7 @@ bool turbulentPrandtlModel::read()
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace PANSModels
 } // End namespace incompressible
 } // End namespace Foam
 

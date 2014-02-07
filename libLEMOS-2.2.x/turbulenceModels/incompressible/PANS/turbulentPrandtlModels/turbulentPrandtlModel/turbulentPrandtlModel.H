@@ -63,6 +63,8 @@ namespace Foam
 {
 namespace incompressible
 {
+namespace PANSModels
+{
 
 /*---------------------------------------------------------------------------*\
                            Class turbulentPrandtlModel Declaration
@@ -85,11 +87,6 @@ protected:
 
     dimensionedScalar sigmaEps_;
     dimensionedScalar sigmaK_;
-
-    // Protected Member Functions
-
-    //- Print model coefficients
-    virtual void printCoeffs();
 
 
 private:
@@ -181,6 +178,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace PANSModels
 } // End namespace incompressible
 } // End namespace Foam
 
