@@ -37,6 +37,8 @@ turbulenceModels/incompressible/PANS/PANSModel/PANSModel.C
 turbulenceModels/incompressible/PANS/kEpsilon/kEpsilon.C
 turbulenceModels/incompressible/PANS/turbulentPrandtlModels/turbulentPrandtlModel/turbulentPrandtlModel.C
 turbulenceModels/incompressible/PANS/turbulentPrandtlModels/zeroTransportModel/zeroTransportModel.C
+turbulenceModels/incompressible/PANS/turbulentPrandtlModels/maximumTransportModel/maximumTransportModel.C
+turbulenceModels/incompressible/PANS/turbulentPrandtlModels/boundaryLayerTransportModel/boundaryLayerTransportModel.C
 
 postProcessing/functionObjects/utilities/uTau/uTau.C
 postProcessing/functionObjects/utilities/uTau/uTauFunctionObject.C
