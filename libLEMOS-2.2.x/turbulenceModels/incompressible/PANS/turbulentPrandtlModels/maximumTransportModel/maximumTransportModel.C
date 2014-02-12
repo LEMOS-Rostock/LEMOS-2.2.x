@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "zeroTransportModel.H"
+#include "maximumTransportModel.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -38,14 +38,14 @@ namespace turbulentPrandtlModels
 {
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-defineTypeNameAndDebug(zeroTransportModel, 0);
-addToRunTimeSelectionTable(turbulentPrandtlModel, zeroTransportModel, dictionary);
+defineTypeNameAndDebug(maximumTransportModel, 0);
+addToRunTimeSelectionTable(turbulentPrandtlModel, maximumTransportModel, dictionary);
 
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-zeroTransportModel::zeroTransportModel
+maximumTransportModel::maximumTransportModel
 (
     const volVectorField& U,
     const surfaceScalarField& phi,
@@ -54,6 +54,7 @@ zeroTransportModel::zeroTransportModel
 )
 : 
     turbulentPrandtlModel(U, phi, param, turbulenceModelName)
+           
 {
     // Force the construction of the mesh deltaCoeffs which may be needed
     // for the construction of the derived models and BCs
@@ -64,12 +65,12 @@ zeroTransportModel::zeroTransportModel
 // * * * * * * * * * * * * * * * * * Selectors * * * * * * * * * * * * * * * //
 
 
-void zeroTransportModel::correct()
+void maximumTransportModel::correct()
 {
 }
 
 
-bool zeroTransportModel::read()
+bool maximumTransportModel::read()
 {
     turbulentPrandtlModel::read();
     sigmaEps_.readIfPresent(coeffDict_);
@@ -78,26 +79,48 @@ bool zeroTransportModel::read()
     return true;
 }
 
-tmp<volScalarField> zeroTransportModel::sigmaK() const 
+tmp<volScalarField> maximumTransportModel::sigmaK() const 
 {
+    return tmp<volScalarField>
+    (
+        new volScalarField
+        (
+            IOobject
+            (
+                "sigmaK",
+                mesh_.time().timeName(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            mesh_,
+            sigmaK_
+        )
+    );
+}
 
-   
-const volScalarField& fk = mesh_.lookupObject<volScalarField>("fk");
-const volScalarField& feps = mesh_.lookupObject<volScalarField>("feps");
+tmp<volScalarField> maximumTransportModel::sigmaEps() const 
+{
+    return tmp<volScalarField>
+    (
+        new volScalarField
+        (
+            IOobject
+            (
+                "sigmaEps",
+                mesh_.time().timeName(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            mesh_,
+            sigmaEps_
+        )
+    );
 
-return  sigmaK_*sqr(fk)/feps;
 };
 
-tmp<volScalarField> zeroTransportModel::sigmaEps() const 
-{
-
-const volScalarField& fk = mesh_.lookupObject<volScalarField>("fk");
-const volScalarField& feps = mesh_.lookupObject<volScalarField>("feps");
-
-return  sigmaEps_*sqr(fk)/feps;
-};
-
-tmp<volScalarField> zeroTransportModel::sigmaOmega() const 
+tmp<volScalarField> maximumTransportModel::sigmaOmega() const 
 {};
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

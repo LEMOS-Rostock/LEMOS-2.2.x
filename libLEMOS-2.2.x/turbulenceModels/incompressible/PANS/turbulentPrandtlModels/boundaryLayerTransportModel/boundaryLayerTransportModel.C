@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "zeroTransportModel.H"
+#include "boundaryLayerTransportModel.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -38,14 +38,14 @@ namespace turbulentPrandtlModels
 {
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-defineTypeNameAndDebug(zeroTransportModel, 0);
-addToRunTimeSelectionTable(turbulentPrandtlModel, zeroTransportModel, dictionary);
+defineTypeNameAndDebug(boundaryLayerTransportModel, 0);
+addToRunTimeSelectionTable(turbulentPrandtlModel, boundaryLayerTransportModel, dictionary);
 
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-zeroTransportModel::zeroTransportModel
+boundaryLayerTransportModel::boundaryLayerTransportModel
 (
     const volVectorField& U,
     const surfaceScalarField& phi,
@@ -64,12 +64,12 @@ zeroTransportModel::zeroTransportModel
 // * * * * * * * * * * * * * * * * * Selectors * * * * * * * * * * * * * * * //
 
 
-void zeroTransportModel::correct()
+void boundaryLayerTransportModel::correct()
 {
 }
 
 
-bool zeroTransportModel::read()
+bool boundaryLayerTransportModel::read()
 {
     turbulentPrandtlModel::read();
     sigmaEps_.readIfPresent(coeffDict_);
@@ -78,26 +78,40 @@ bool zeroTransportModel::read()
     return true;
 }
 
-tmp<volScalarField> zeroTransportModel::sigmaK() const 
+tmp<volScalarField> boundaryLayerTransportModel::sigmaK() const 
 {
+    return tmp<volScalarField>
+    (
+        new volScalarField
+        (
+            IOobject
+            (
+                "ones",
+                mesh_.time().timeName(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            mesh_,
+            dimensionedScalar
+            (
+                "one",
+                sigmaK_.dimensions(),
+                1.0
+            )
+        )
+    );
+}
 
-   
-const volScalarField& fk = mesh_.lookupObject<volScalarField>("fk");
-const volScalarField& feps = mesh_.lookupObject<volScalarField>("feps");
-
-return  sigmaK_*sqr(fk)/feps;
+tmp<volScalarField> boundaryLayerTransportModel::sigmaEps() const 
+{
+    const volScalarField& fk = mesh_.lookupObject<volScalarField>("fk");
+    const volScalarField& feps = mesh_.lookupObject<volScalarField>("feps");
+    
+    return  sigmaEps_*feps/fk;
 };
 
-tmp<volScalarField> zeroTransportModel::sigmaEps() const 
-{
-
-const volScalarField& fk = mesh_.lookupObject<volScalarField>("fk");
-const volScalarField& feps = mesh_.lookupObject<volScalarField>("feps");
-
-return  sigmaEps_*sqr(fk)/feps;
-};
-
-tmp<volScalarField> zeroTransportModel::sigmaOmega() const 
+tmp<volScalarField> boundaryLayerTransportModel::sigmaOmega() const 
 {};
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

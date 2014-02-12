@@ -23,7 +23,7 @@ License
 
 
 Namespace
-    Foam::incompressible::turbulentPrandtlModels:turbulentPrandtlModels
+    Foam::incompressible::boundaryLayerTransportModels:boundaryLayerTransportModels
 
 Group
     grpIcoPANSModels
@@ -32,18 +32,20 @@ Description
     Namespace for incompressible turbulent Prandtl models.
 
 Class
-    Foam::incompressible::turbulentPrandtlModel
+    Foam::incompressible::boundaryLayerTransportModel
 
 Description
-    Abstract base class for incompressible turbulent Prandtl models.
+    Boundary layer transport model is exclusive for unresolved sigma epsilon 
+    contribution. The validity of this model is only within the log-layer and
+    is not expected to capture the physics of the flow outside of the boundary layer.
 
 SourceFiles
-    turbulentPrandtlModel.C
+    boundaryLayerTransportModel.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef turbulentPrandtlModel_H
-#define turbulentPrandtlModel_H
+#ifndef boundaryLayerTransportModel_H
+#define boundaryLayerTransportModel_H
 
 #include "incompressible/turbulenceModel/turbulenceModel.H"
 #include "volFields.H"
@@ -56,6 +58,7 @@ SourceFiles
 #include "bound.H"
 #include "autoPtr.H"
 #include "runTimeSelectionTables.H"
+#include "turbulentPrandtlModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -65,80 +68,37 @@ namespace incompressible
 {
 namespace PANSModels
 {
-
+namespace turbulentPrandtlModels
+{
 /*---------------------------------------------------------------------------*\
-                           Class turbulentPrandtlModel Declaration
+                           Class boundaryLayerTransportModel Declaration
 \*---------------------------------------------------------------------------*/
 
-class turbulentPrandtlModel
+class boundaryLayerTransportModel
 :
-    public IOdictionary
+    public turbulentPrandtlModel
 {
-
-protected:
-
-    // Protected data
-
-    const fvMesh& mesh_;
-
-    word param_;
-
-    dictionary coeffDict_;
-
-    dimensionedScalar sigmaEps_;
-    dimensionedScalar sigmaK_;
-
-
 private:
 
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        turbulentPrandtlModel(const turbulentPrandtlModel&);
+        boundaryLayerTransportModel(const boundaryLayerTransportModel&);
 
         //- Disallow default bitwise assignment
-        void operator=(const turbulentPrandtlModel&);
+        void operator=(const boundaryLayerTransportModel&);
 
 
 public:
 
     //- Runtime type information
-    TypeName("turbulentPrandtlModel");
-
-
-    // Declare run-time constructor selection table
-
-        declareRunTimeSelectionTable
-        (
-            autoPtr,
-            turbulentPrandtlModel,
-            dictionary,
-            (   
-                const volVectorField& U,
-                const surfaceScalarField& phi,
-                const word& param,
-                const word& turbulenceModelName
-            ),
-            (U, phi, param, turbulenceModelName)
-        );
+    TypeName("boundaryLayerTransportModel");
 
 
     // Constructors
 
         //- Construct from components
-        turbulentPrandtlModel
-        (
-            const volVectorField& U,
-            const surfaceScalarField& phi,
-            const word& param,
-            const word& turbulenceModelName = turbulenceModel::typeName
-        );
-
-
-    // Selectors
-
-        //- Return a reference to the selected turbulentPrandtl model
-        static autoPtr<turbulentPrandtlModel> New
+        boundaryLayerTransportModel
         (
             const volVectorField& U,
             const surfaceScalarField& phi,
@@ -148,7 +108,7 @@ public:
 
 
     //- Destructor
-    virtual ~turbulentPrandtlModel()
+    virtual ~boundaryLayerTransportModel()
     {}
 
 
@@ -156,17 +116,14 @@ public:
 
         // Access
 
-       
-
-
         //- 
-        virtual tmp<volScalarField> sigmaEps() const = 0;
+        virtual tmp<volScalarField> sigmaEps() const ;
         
         //-
-        virtual tmp<volScalarField> sigmaK() const = 0;
-        
+        virtual tmp<volScalarField> sigmaK() const;
+
         //-
-        virtual tmp<volScalarField> sigmaOmega() const = 0;
+        virtual tmp<volScalarField> sigmaOmega() const;
 
         //- Solve the turbulence equations and correct the turbulence viscosity
         virtual void correct();
@@ -178,6 +135,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace turbulentPrandtlModels
 } // End namespace PANSModels
 } // End namespace incompressible
 } // End namespace Foam
